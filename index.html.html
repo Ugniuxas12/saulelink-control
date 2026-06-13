@@ -1,0 +1,556 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0a0f1a;--bg2:#0e1629;--bg3:#141d35;--bg4:#1a2540;
+    --border:rgba(99,179,237,0.13);--accent:#00e5a0;--accent2:#3b82f6;
+    --accent3:#f59e0b;--text:#f0f4ff;--muted:#7a90b0;--danger:#ef4444;
+  }
+  body{background:transparent;font-family:'Syne',sans-serif;color:var(--text)}
+  .app{display:flex;height:560px;background:var(--bg);border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+  .sidebar{width:186px;min-width:186px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column}
+  .logo{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+  .logo-tag{font-size:9px;letter-spacing:0.18em;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+  .logo-name{font-size:15px;font-weight:800;color:#fff}
+  .nav{padding:10px 8px;flex:1;display:flex;flex-direction:column;gap:3px}
+  .nav-lbl{font-size:9px;letter-spacing:0.15em;color:var(--muted);font-family:'JetBrains Mono',monospace;padding:10px 8px 5px}
+  .nb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid transparent;background:var(--bg3);color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:left;width:100%;transition:all 0.15s}
+  .nb:hover{background:var(--bg4);border-color:var(--border)}
+  .nb.active{background:rgba(0,229,160,0.12);border-color:rgba(0,229,160,0.3);color:var(--accent)}
+  .nb .ico{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+  .sdot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:auto;flex-shrink:0;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+  .sfooter{padding:12px 16px;border-top:1px solid var(--border)}
+  .sstat{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .sdot2{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2)}
+  .ptitle{font-size:12px;font-weight:700;letter-spacing:0.1em;color:#fff}
+  .tright{display:flex;align-items:center;gap:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+  .clk{color:var(--accent);font-weight:600}
+  .content{flex:1;overflow-y:auto;padding:18px 22px}
+  .content::-webkit-scrollbar{width:4px}
+  .content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+  /* BENDRI */
+  .shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .stitle{font-size:9px;letter-spacing:0.15em;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .sbg{font-size:8px;padding:3px 8px;border-radius:99px;font-family:'JetBrains Mono',monospace;background:rgba(0,229,160,0.1);color:var(--accent)}
+  .sbadge{font-size:8px;letter-spacing:0.08em;padding:3px 8px;border-radius:99px;font-family:'JetBrains Mono',monospace}
+  .sbadge.online{background:rgba(0,229,160,0.15);color:var(--accent)}.sbadge.standby{background:rgba(245,158,11,0.15);color:var(--accent3)}
+  .ir{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+  .ir:last-child{border-bottom:none}
+  .ir-lbl{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px}
+  .ir-val{font-weight:700;font-size:12px;color:#fff}
+  .cc{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .cc-title{font-size:9px;letter-spacing:0.12em;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:10px}
+
+  /* DASHBOARD */
+  .mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  .mc{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;position:relative;overflow:hidden}
+  .mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+  .mc.g::before{background:var(--accent)}.mc.b::before{background:var(--accent2)}.mc.a::before{background:var(--accent3)}.mc.r::before{background:var(--danger)}
+  .mc-lbl{font-size:8px;letter-spacing:0.15em;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+  .mc-val{font-size:22px;font-weight:800;line-height:1;margin-bottom:3px}
+  .mc.g .mc-val{color:var(--accent)}.mc.b .mc-val{color:var(--accent2)}.mc.a .mc-val{color:var(--accent3)}.mc.r .mc-val{color:var(--danger)}
+  .mc-sub{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .bc{display:flex;align-items:flex-end;gap:5px;height:74px}
+  .bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .bar{width:100%;border-radius:3px 3px 0 0;transition:height 0.8s cubic-bezier(0.34,1.56,0.64,1);background:linear-gradient(180deg,var(--accent),rgba(0,229,160,0.25));min-height:4px}
+  .blbl{font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+  /* ELEKTRINIŲ SĄRAŠAS */
+  .egrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .ec{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s}
+  .ec:hover{border-color:rgba(0,229,160,0.35);transform:translateY(-2px)}
+  .ec.on{border-color:rgba(0,229,160,0.3)}
+  .ec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .ec-name{font-size:13px;font-weight:700;color:#fff}
+  .estats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .esl{font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+  .esv{font-size:12px;font-weight:700;color:#fff}
+  .pb-wrap{margin-top:10px}
+  .pb-lbl{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+  .pb{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+  .pbf{height:100%;border-radius:2px}
+
+  /* DETALIŲ LANGAS */
+  .dtopbar{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .back-btn{background:none;border:1px solid var(--border);color:#fff;padding:6px 14px;border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+  .back-btn:hover{background:var(--bg4)}
+  .dt-title{font-size:15px;font-weight:800;color:#fff;flex:1}
+  .dt-loc{font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .spill{padding:4px 12px;border-radius:99px;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:0.08em}
+  .spill.online{background:rgba(0,229,160,0.15);color:var(--accent);border:1px solid rgba(0,229,160,0.3)}
+  .spill.standby{background:rgba(245,158,11,0.15);color:var(--accent3);border:1px solid rgba(245,158,11,0.3)}
+  .istrip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+  .ib{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  .ib-lbl{font-size:8px;letter-spacing:0.12em;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+  .ib-val{font-size:18px;font-weight:800;line-height:1}
+  .ib-unit{font-size:10px;color:var(--muted);font-weight:400;margin-left:2px}
+  .ib.cg .ib-val{color:var(--accent)}.ib.cb .ib-val{color:var(--accent2)}.ib.ca .ib-val{color:var(--accent3)}
+  .dcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .sblock{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:13px}
+  .sblock-head{font-size:9px;letter-spacing:0.15em;color:var(--accent);font-family:'JetBrains Mono',monospace;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .param{display:flex;flex-direction:column;gap:5px}
+  .param-top{display:flex;justify-content:space-between;align-items:center}
+  .pname{font-size:12px;font-weight:700;color:#fff}
+  .pbadge{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800}
+  .pbadge.g{color:var(--accent)}.pbadge.b{color:var(--accent2)}.pbadge.p{color:#a855f7}.pbadge.a{color:var(--accent3)}
+  input[type=range].sl{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;outline:none}
+  input[type=range].sl::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;cursor:pointer}
+  input[type=range].sl.g{background:linear-gradient(to right,var(--accent) 0%,var(--accent) var(--p,50%),rgba(255,255,255,0.1) var(--p,50%))}
+  input[type=range].sl.g::-webkit-slider-thumb{box-shadow:0 0 0 3px rgba(0,229,160,0.3)}
+  input[type=range].sl.b{background:linear-gradient(to right,var(--accent2) 0%,var(--accent2) var(--p,1%),rgba(255,255,255,0.1) var(--p,1%))}
+  input[type=range].sl.b::-webkit-slider-thumb{box-shadow:0 0 0 3px rgba(59,130,246,0.3)}
+  input[type=range].sl.p{background:linear-gradient(to right,#a855f7 0%,#a855f7 var(--p,22%),rgba(255,255,255,0.1) var(--p,22%))}
+  input[type=range].sl.p::-webkit-slider-thumb{box-shadow:0 0 0 3px rgba(168,85,247,0.3)}
+  input[type=range].sl.a{background:linear-gradient(to right,var(--accent3) 0%,var(--accent3) var(--p,29%),rgba(255,255,255,0.1) var(--p,29%))}
+  input[type=range].sl.a::-webkit-slider-thumb{box-shadow:0 0 0 3px rgba(245,158,11,0.3)}
+  .plims{display:flex;justify-content:space-between;font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .rblock{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .rblock-head{font-size:9px;letter-spacing:0.15em;color:var(--accent3);font-family:'JetBrains Mono',monospace;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .mode-row{display:flex;gap:6px}
+  .mpill{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg4);color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.15s}
+  .mpill:hover{color:#fff}
+  .mpill.auto-on{border-color:var(--accent2);background:rgba(59,130,246,0.15);color:var(--accent2)}
+  .mpill.man-on{border-color:var(--accent3);background:rgba(245,158,11,0.13);color:var(--accent3)}
+  .auto-info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:12px;font-size:10px;color:var(--accent2);font-family:'JetBrains Mono',monospace;line-height:1.6}
+  .ctrl-area{display:flex;align-items:center;gap:14px}
+  .deg-badge{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent3);text-align:center;margin-top:4px}
+  .rbtns{display:flex;flex-direction:column;gap:8px;flex:1}
+  .rbtn{width:100%;height:44px;border-radius:9px;border:1.5px solid rgba(245,158,11,0.3);background:#111c0a;color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.1s;user-select:none;-webkit-user-select:none}
+  .rbtn:hover{background:#1a2e0e;border-color:rgba(245,158,11,0.6);color:var(--accent3)}
+  .rbtn.pressing{background:rgba(245,158,11,0.18);border-color:var(--accent3);color:var(--accent3);transform:scale(0.97)}
+  .rbtn-hint{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-align:center}
+  .save-row{display:flex;align-items:center;gap:10px;padding-top:2px}
+  .sbtn{padding:9px 20px;border-radius:8px;border:1px solid rgba(0,229,160,0.3);background:rgba(0,229,160,0.1);color:var(--accent);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s}
+  .sbtn:hover{background:rgba(0,229,160,0.2)}
+  .ok-msg{font-size:10px;color:var(--accent);font-family:'JetBrains Mono',monospace;opacity:0;transition:opacity 0.3s}
+  .ok-msg.show{opacity:1}
+
+  /* ORAI */
+  .oras-top{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .dabar-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px}
+  .dabar-head{font-size:9px;letter-spacing:0.15em;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+  .sensor-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-family:'JetBrains Mono',monospace;padding:3px 9px;border-radius:99px;background:rgba(0,229,160,0.1);color:var(--accent);border:1px solid rgba(0,229,160,0.2)}
+  .pulse-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite}
+  .big-temp{font-size:48px;font-weight:800;line-height:1;color:#fff}
+  .big-temp span{font-size:22px;color:var(--muted);font-weight:400}
+  .dmeta-row{display:flex;align-items:center;gap:8px;padding:3px 0}
+  .dmeta-lbl{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;min-width:62px}
+  .dmeta-val{color:#fff;font-weight:700;font-size:11px}
+  .dmeta-val.r{color:#f87171}.dmeta-val.b{color:var(--accent2)}.dmeta-val.a{color:var(--accent3)}.dmeta-val.g{color:var(--accent)}
+  .dregme-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .dregme-head{font-size:9px;letter-spacing:0.15em;color:var(--accent2);font-family:'JetBrains Mono',monospace}
+  .dregme-big{font-size:44px;font-weight:800;color:var(--accent2);line-height:1}
+  .dregme-big span{font-size:20px;font-weight:400;color:var(--muted)}
+  .gauge-row{display:flex;align-items:center;gap:10px}
+  .gauge-bar{width:8px;height:110px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+  .gauge-fill{border-radius:4px;transition:height 1s cubic-bezier(0.34,1.56,0.64,1)}
+  .gauge-labels{display:flex;flex-direction:column;justify-content:space-between;height:110px;font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .dregme-status{font-size:11px;font-weight:700}
+  .dregme-desc{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .grafikai{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .gchart{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .gchart-head{font-size:9px;letter-spacing:0.15em;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+  .gchart-badge{font-size:8px;padding:2px 7px;border-radius:99px;font-family:'JetBrains Mono',monospace}
+  .gchart-badge.temp{background:rgba(239,68,68,0.12);color:#f87171}
+  .gchart-badge.hum{background:rgba(59,130,246,0.12);color:var(--accent2)}
+  .chart-svg{width:100%;overflow:visible}
+  .axis-lbl{font-size:8px;fill:#7a90b0;font-family:'JetBrains Mono',monospace}
+  .grid-line{stroke:rgba(255,255,255,0.04);stroke-width:1}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+  .stat-lbl{font-size:8px;letter-spacing:0.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+  .stat-val{font-size:16px;font-weight:800}
+  .stat-val.r{color:#f87171}.stat-val.b{color:var(--accent2)}.stat-val.g{color:var(--accent)}.stat-val.a{color:var(--accent3)}
+  .stat-sub{font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px}
+</style>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-tag">SRV · v2.9.0</div>
+      <div class="logo-name">SERVERIS</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-lbl">SISTEMA</div>
+      <button class="nb" id="b-dash" onclick="go('dashboard')"><span class="ico">⊞</span>Dashboard<span class="sdot"></span></button>
+      <button class="nb" id="b-elek" onclick="go('elektrines')"><span class="ico">⚡</span>Elektrinės</button>
+      <button class="nb" id="b-vejo" onclick="go('vejo')"><span class="ico">💨</span>Vėjo jėgainė</button>
+      <button class="nb" id="b-orai" onclick="go('orai')"><span class="ico">🌡</span>Orai</button>
+    </nav>
+    <div class="sfooter">
+      <div class="sstat"><div class="sdot2"></div>Sistema veikia</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="topbar">
+      <div class="ptitle" id="ptitle">PAGRINDINĖ PANELĖ</div>
+      <div class="tright"><span id="dt"></span><span class="clk" id="clk"></span></div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<script>
+let rotInt=null, rotKampas=0;
+
+const elek=[
+  {id:1,name:'Elektrinė 1',status:'online', galia:142,temp:38,apkrova:71,vietove:'Valmantiškiai',maxVejas:15,jautrumas:50,uzdelsimasSek:5,infoMin:3,rankinis:false,kampas:0},
+  {id:2,name:'Elektrinė 2',status:'online', galia:89, temp:31,apkrova:59,vietove:'Eugenijaus',   maxVejas:20,jautrumas:70,uzdelsimasSek:2,infoMin:1,rankinis:false,kampas:0},
+  {id:3,name:'Elektrinė 3',status:'standby',galia:0,  temp:22,apkrova:0, vietove:'Sadausko',     maxVejas:18,jautrumas:30,uzdelsimasSek:10,infoMin:5,rankinis:true,kampas:270},
+];
+
+const dabar={temp:20.3,hum:65,slygis:1013,jauc:19.1};
+const dienos=['P','A','T','K','Pn','Š','Se'];
+const tempData=[18.2,21.5,19.8,23.1,22.4,17.9,20.3];
+const humData=[62,55,70,48,52,78,65];
+const tempMax=[21.0,24.2,22.5,26.0,25.1,20.4,23.1];
+const tempMin=[14.1,17.3,16.2,19.8,18.6,14.2,16.9];
+
+function clkFn(){
+  const n=new Date();
+  const el=document.getElementById('clk');if(el)el.textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
+  const d=document.getElementById('dt');if(d)d.textContent=n.toISOString().slice(0,10);
+}
+clkFn();setInterval(clkFn,1000);
+
+function setActive(id){
+  ['b-dash','b-elek','b-vejo','b-orai'].forEach(b=>document.getElementById(b)?.classList.remove('active'));
+  if(id)document.getElementById(id)?.classList.add('active');
+}
+
+const barD=[62,78,55,90,71,83,68],barL=['P','A','T','K','Pn','Š','Se'];
+
+function go(page){
+  stopR();
+  const titles={dashboard:'PAGRINDINĖ PANELĖ',elektrines:'ELEKTRINIŲ VALDYMAS',vejo:'VĖJO JĖGAINĖ',orai:'ORAI IR DRĖGMĖ'};
+  const btns={dashboard:'b-dash',elektrines:'b-elek',vejo:'b-vejo',orai:'b-orai'};
+  document.getElementById('ptitle').textContent=titles[page]||'';
+  setActive(btns[page]||null);
+  const C=document.getElementById('content');
+
+  if(page==='dashboard'){
+    C.innerHTML=`
+      <div class="mrow">
+        <div class="mc g"><div class="mc-lbl">BENDRA GALIA</div><div class="mc-val">231</div><div class="mc-sub">kW · online</div></div>
+        <div class="mc b"><div class="mc-lbl">TEMPERATŪRA</div><div class="mc-val">20.3°</div><div class="mc-sub">°C · sensorius</div></div>
+        <div class="mc a"><div class="mc-lbl">DRĖGMĖ</div><div class="mc-val">65%</div><div class="mc-sub">normalu</div></div>
+        <div class="mc r"><div class="mc-lbl">ĮSPĖJIMAI</div><div class="mc-val">0</div><div class="mc-sub">klaidų nėra</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="cc"><div class="cc-title">SAVAITĖS GAMYBA (kW)</div><div class="bc" id="bc"></div></div>
+        <div class="cc"><div class="cc-title">SISTEMOS BŪKLĖ</div>
+          ${elek.map(e=>`<div class="ir"><span style="font-size:12px;font-weight:700;color:#fff">${e.name} · ${e.vietove}</span><span class="sbadge ${e.status}">${e.status.toUpperCase()}</span></div>`).join('')}
+          <div class="ir"><span style="font-size:12px;font-weight:700;color:#fff">Vėjo jėgainė</span><span class="sbadge online">ONLINE</span></div>
+        </div>
+      </div>`;
+    const bc=document.getElementById('bc');
+    barD.forEach((v,i)=>{
+      const w=document.createElement('div');w.className='bw';
+      const b=document.createElement('div');b.className='bar';b.style.height='0px';
+      const l=document.createElement('div');l.className='blbl';l.textContent=barL[i];
+      w.appendChild(b);w.appendChild(l);bc.appendChild(w);
+      setTimeout(()=>{b.style.height=Math.round(v*0.72)+'px';},80+i*60);
+    });
+  }
+
+  else if(page==='elektrines'){
+    C.innerHTML=`
+      <div class="shdr"><div class="stitle">VISOS ELEKTRINĖS</div><div class="sbg">3 ĮRENGINIAI</div></div>
+      <div class="egrid">
+        ${elek.map(e=>`
+          <div class="ec ${e.status==='online'?'on':''}" onclick="showDetail(${e.id})">
+            <div class="ec-hdr"><div class="ec-name">${e.name}</div><span class="sbadge ${e.status}">${e.status.toUpperCase()}</span></div>
+            <div class="estats">
+              <div><div class="esl">GALIA</div><div class="esv">${e.galia} kW</div></div>
+              <div><div class="esl">TEMP.</div><div class="esv">${e.temp}°C</div></div>
+              <div><div class="esl">VIETOVĖ</div><div class="esv" style="font-size:10px">${e.vietove}</div></div>
+              <div><div class="esl">JAUTRUMAS</div><div class="esv">${e.jautrumas}%</div></div>
+            </div>
+            <div class="pb-wrap">
+              <div class="pb-lbl"><span>APKROVA</span><span>${e.apkrova}%</span></div>
+              <div class="pb"><div class="pbf" style="width:${e.apkrova}%;background:${e.apkrova>80?'var(--danger)':e.apkrova>50?'var(--accent3)':'var(--accent)'}"></div></div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  else if(page==='vejo'){
+    C.innerHTML=`
+      <div class="shdr"><div class="stitle">VĖJO JĖGAINĖ</div><div class="sbg">ONLINE</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="cc">
+          <div class="ir"><span class="ir-lbl">GREITIS</span><span class="ir-val" style="color:var(--accent)">4.2 m/s</span></div>
+          <div class="ir"><span class="ir-lbl">KRYPTIS</span><span class="ir-val">Šiaurės rytai</span></div>
+          <div class="ir"><span class="ir-lbl">GALINGUMAS</span><span class="ir-val" style="color:var(--accent)">18 kW</span></div>
+          <div class="ir"><span class="ir-lbl">SŪKIŲ SK.</span><span class="ir-val" style="color:var(--accent3)">12.4 rpm</span></div>
+          <div class="ir"><span class="ir-lbl">EFEKTYVUMAS</span><span class="ir-val" style="color:var(--accent)">87%</span></div>
+        </div>
+        <div class="cc" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <svg width="90" height="90" viewBox="0 0 120 120" style="animation:spin 3s linear infinite">
+            <circle cx="60" cy="60" r="8" fill="var(--accent)" opacity="0.8"/>
+            <path d="M60 52 Q68 30 60 8 Q52 30 60 52Z" fill="var(--accent)" opacity="0.7"/>
+            <path d="M60 68 Q68 90 60 112 Q52 90 60 68Z" fill="var(--accent)" opacity="0.5"/>
+            <path d="M52 60 Q30 52 8 60 Q30 68 52 60Z" fill="var(--accent)" opacity="0.6"/>
+            <path d="M68 60 Q90 52 112 60 Q90 68 68 60Z" fill="var(--accent)" opacity="0.4"/>
+          </svg>
+          <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+          <div style="margin-top:10px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace">TURBINA SUKASI</div>
+        </div>
+      </div>`;
+  }
+
+  else if(page==='orai') renderOrai(C);
+}
+
+function showDetail(id){
+  stopR();
+  const e=elek.find(x=>x.id===id);
+  rotKampas=e.kampas;
+  document.getElementById('ptitle').textContent=e.name.toUpperCase()+' · '+e.vietove.toUpperCase();
+  setActive('b-elek');
+  const C=document.getElementById('content');
+  const pct=(v,min,max)=>((v-min)/(max-min)*100).toFixed(1)+'%';
+
+  C.innerHTML=`
+    <div class="dtopbar">
+      <button class="back-btn" onclick="go('elektrines')">← Atgal</button>
+      <div>
+        <div class="dt-title">${e.name}</div>
+        <div class="dt-loc">📍 ${e.vietove} · GPIO 4/5/6/7</div>
+      </div>
+      <div class="spill ${e.status}">${e.status.toUpperCase()}</div>
+    </div>
+
+    <div class="istrip">
+      <div class="ib cg"><div class="ib-lbl">GALIA</div><div><span class="ib-val">${e.galia}</span><span class="ib-unit">kW</span></div></div>
+      <div class="ib cb"><div class="ib-lbl">TEMPERATŪRA</div><div><span class="ib-val">${e.temp}</span><span class="ib-unit">°C</span></div></div>
+      <div class="ib ca"><div class="ib-lbl">APKROVA</div><div><span class="ib-val">${e.apkrova}</span><span class="ib-unit">%</span></div></div>
+      <div class="ib cg"><div class="ib-lbl">MAKS. VĖJAS</div><div><span class="ib-val" id="vejD">${e.maxVejas}</span><span class="ib-unit">m/s</span></div></div>
+    </div>
+
+    <div class="dcols">
+      <div class="sblock">
+        <div class="sblock-head">⚙ NUSTATYMAI</div>
+        <div class="param">
+          <div class="param-top"><span class="pname">Jautrumas</span><span class="pbadge g"><span id="jV">${e.jautrumas}</span>%</span></div>
+          <input type="range" class="sl g" min="1" max="100" value="${e.jautrumas}" style="--p:${pct(e.jautrumas,1,100)}" oninput="upd(this,'jV',1,100)">
+          <div class="plims"><span>1 silpnas</span><span>100 stiprus</span></div>
+        </div>
+        <div class="param">
+          <div class="param-top"><span class="pname">Uždelsimas</span><span class="pbadge b"><span id="uV">${e.uzdelsimasSek}</span>s</span></div>
+          <input type="range" class="sl b" min="1" max="500" value="${e.uzdelsimasSek}" style="--p:${pct(e.uzdelsimasSek,1,500)}" oninput="upd(this,'uV',1,500)">
+          <div class="plims"><span>1s</span><span>500s</span></div>
+        </div>
+        <div class="param">
+          <div class="param-top"><span class="pname">Info rinkimas</span><span class="pbadge p"><span id="iV">${e.infoMin}</span>min</span></div>
+          <input type="range" class="sl p" min="1" max="10" value="${e.infoMin}" style="--p:${pct(e.infoMin,1,10)}" oninput="upd(this,'iV',1,10)">
+          <div class="plims"><span>1 min</span><span>10 min</span></div>
+        </div>
+        <div class="param">
+          <div class="param-top"><span class="pname">Maks. vėjas</span><span class="pbadge a"><span id="vV">${e.maxVejas}</span>m/s</span></div>
+          <input type="range" class="sl a" min="5" max="40" value="${e.maxVejas}" style="--p:${pct(e.maxVejas,5,40)}" oninput="updV(this)">
+          <div class="plims"><span>5 m/s</span><span>40 m/s</span></div>
+        </div>
+        <div class="save-row">
+          <button class="sbtn" onclick="save()">💾 Išsaugoti</button>
+          <span class="ok-msg" id="okMsg">✓ Išsaugota</span>
+        </div>
+      </div>
+
+      <div class="rblock">
+        <div class="rblock-head">
+          <span>🎯 VALDYMAS</span>
+          <span id="rezB" style="font-size:9px;padding:2px 8px;border-radius:99px;background:${e.rankinis?'rgba(245,158,11,0.15)':'rgba(59,130,246,0.15)'};color:${e.rankinis?'var(--accent3)':'var(--accent2)'}">
+            ${e.rankinis?'RANKINIS':'AUTO'}
+          </span>
+        </div>
+        <div class="mode-row">
+          <button class="mpill ${e.rankinis?'':'auto-on'}" id="pA" onclick="setRez('auto')">⚙ Automatinis</button>
+          <button class="mpill ${e.rankinis?'man-on':''}" id="pM" onclick="setRez('rankinis')">✋ Rankinis</button>
+        </div>
+        <div id="autoInfo" style="display:${e.rankinis?'none':'block'}" class="auto-info">
+          Elektrinė automatiškai seka saulę pagal 4 fotodiodų signalus.<br><br>
+          Kampas atnaujinamas kas <b id="aiMin">${e.infoMin}</b> min.
+        </div>
+        <div id="manCtrl" style="display:${e.rankinis?'flex':'none'};flex-direction:column;gap:10px">
+          <div class="ctrl-area">
+            <div>
+              <svg id="rotSvg" width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(${rotKampas}deg);transition:transform 0.04s linear">
+                <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(99,179,237,0.1)" stroke-width="8" stroke-dasharray="3 7"/>
+                <circle cx="40" cy="40" r="5" fill="var(--accent3)" opacity="0.9"/>
+                <line x1="40" y1="35" x2="40" y2="10" stroke="var(--accent3)" stroke-width="3.5" stroke-linecap="round"/>
+                <line x1="33" y1="45" x2="13" y2="63" stroke="var(--accent3)" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+                <line x1="47" y1="45" x2="67" y2="63" stroke="var(--accent3)" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+                <polygon points="40,5 37,12 43,12" fill="var(--accent)" opacity="0.5"/>
+              </svg>
+              <div class="deg-badge"><span id="degD">${rotKampas}</span>°</div>
+            </div>
+            <div class="rbtns">
+              <button class="rbtn" id="bL" onmousedown="startR(-1)" onmouseup="stopR()" onmouseleave="stopR()" ontouchstart="startR(-1)" ontouchend="stopR()">← Kairė</button>
+              <button class="rbtn" id="bR" onmousedown="startR(1)" onmouseup="stopR()" onmouseleave="stopR()" ontouchstart="startR(1)" ontouchend="stopR()">Dešinė →</button>
+              <div class="rbtn-hint">Laikykite nuspaustą</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function upd(el,id,min,max){
+  const v=parseInt(el.value);
+  document.getElementById(id).textContent=v;
+  el.style.setProperty('--p',((v-min)/(max-min)*100).toFixed(1)+'%');
+  if(id==='iV'){const a=document.getElementById('aiMin');if(a)a.textContent=v;}
+}
+function updV(el){
+  const v=parseInt(el.value);
+  document.getElementById('vV').textContent=v;
+  document.getElementById('vejD').textContent=v;
+  el.style.setProperty('--p',((v-5)/35*100).toFixed(1)+'%');
+}
+function setRez(r){
+  const m=r==='rankinis';
+  document.getElementById('pA').className='mpill'+(m?'':' auto-on');
+  document.getElementById('pM').className='mpill'+(m?' man-on':'');
+  document.getElementById('autoInfo').style.display=m?'none':'block';
+  document.getElementById('manCtrl').style.display=m?'flex':'none';
+  const b=document.getElementById('rezB');
+  b.textContent=m?'RANKINIS':'AUTO';
+  b.style.background=m?'rgba(245,158,11,0.15)':'rgba(59,130,246,0.15)';
+  b.style.color=m?'var(--accent3)':'var(--accent2)';
+  if(!m)stopR();
+}
+function startR(dir){
+  stopR();
+  document.getElementById(dir===-1?'bL':'bR')?.classList.add('pressing');
+  rotInt=setInterval(()=>{
+    rotKampas=(rotKampas+dir*2+360)%360;
+    const s=document.getElementById('rotSvg'),d=document.getElementById('degD');
+    if(s)s.style.transform=`rotate(${rotKampas}deg)`;
+    if(d)d.textContent=Math.round(rotKampas);
+  },30);
+}
+function stopR(){
+  if(rotInt){clearInterval(rotInt);rotInt=null;}
+  document.getElementById('bL')?.classList.remove('pressing');
+  document.getElementById('bR')?.classList.remove('pressing');
+}
+function save(){
+  const m=document.getElementById('okMsg');
+  if(m){m.classList.add('show');setTimeout(()=>m.classList.remove('show'),2500);}
+}
+
+function humStatus(h){
+  if(h<30)return{txt:'Sausa',col:'#f87171'};
+  if(h<50)return{txt:'Normalu',col:'var(--accent)'};
+  if(h<70)return{txt:'Komfortiška',col:'var(--accent2)'};
+  if(h<85)return{txt:'Drėgna',col:'var(--accent3)'};
+  return{txt:'Labai drėgna',col:'#f87171'};
+}
+
+function renderOrai(C){
+  const hs=humStatus(dabar.hum);
+  const tpts=tempData.map((v,i)=>`${30+i*30+15},${75-((v-14)/(26-14))*70}`).join(' L');
+  const hmpts=humData.map((v,i)=>`${30+i*30+15},${75-(v/100)*70}`).join(' L');
+  const tmxpts=tempMax.map((v,i)=>`${30+i*30+15},${75-((v-14)/(26-14))*70}`).join(' L');
+  const tmnpts=tempMin.map((v,i)=>`${30+i*30+15},${75-((v-14)/(26-14))*70}`).join(' L');
+  const lx=30+6*30+15, fx=30+0*30+15;
+
+  C.innerHTML=`
+    <div class="oras-top">
+      <div class="dabar-card">
+        <div>
+          <div class="dabar-head">DABARTINĖ TEMPERATŪRA</div>
+          <div class="sensor-badge"><div class="pulse-dot"></div>LIVE · ESP32</div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:16px">
+          <div class="big-temp">${dabar.temp.toFixed(1)}<span>°C</span></div>
+          <div>
+            <div class="dmeta-row"><span class="dmeta-lbl">MAX savaitė</span><span class="dmeta-val r">26.0°C</span></div>
+            <div class="dmeta-row"><span class="dmeta-lbl">MIN savaitė</span><span class="dmeta-val b">14.1°C</span></div>
+            <div class="dmeta-row"><span class="dmeta-lbl">Juntama</span><span class="dmeta-val a">${dabar.jauc}°C</span></div>
+            <div class="dmeta-row"><span class="dmeta-lbl">Slėgis</span><span class="dmeta-val">${dabar.slygis} hPa</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dregme-card">
+        <div class="dregme-head">DRĖGMĖ</div>
+        <div style="display:flex;align-items:center;gap:14px;flex:1">
+          <div class="gauge-row">
+            <div class="gauge-labels"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
+            <div class="gauge-bar">
+              <div class="gauge-fill" style="height:${dabar.hum}%;background:linear-gradient(to top,var(--accent2),rgba(59,130,246,0.3))"></div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div class="dregme-big">${dabar.hum}<span>%</span></div>
+            <div class="dregme-status" style="color:${hs.col}">${hs.txt}</div>
+            <div class="dregme-desc" style="margin-top:4px">Paskutinis: dabar</div>
+            <div style="margin-top:10px">
+              <div class="dmeta-row"><span class="dmeta-lbl">MAX savaitė</span><span class="dmeta-val b">78%</span></div>
+              <div class="dmeta-row"><span class="dmeta-lbl">MIN savaitė</span><span class="dmeta-val g">48%</span></div>
+              <div class="dmeta-row"><span class="dmeta-lbl">Vidurkis</span><span class="dmeta-val">61%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grafikai">
+      <div class="gchart">
+        <div class="gchart-head"><span>SAVAITĖS TEMPERATŪRA</span><span class="gchart-badge temp">°C</span></div>
+        <svg class="chart-svg" viewBox="0 0 240 90" height="88">
+          <defs>
+            <linearGradient id="gt" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f87171" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#f87171" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          ${[0,25,50,75].map(y=>`<line class="grid-line" x1="30" y1="${y}" x2="240" y2="${y}"/>`).join('')}
+          <text class="axis-lbl" x="0" y="4">26°</text><text class="axis-lbl" x="0" y="29">22°</text>
+          <text class="axis-lbl" x="0" y="54">18°</text><text class="axis-lbl" x="0" y="79">14°</text>
+          ${dienos.map((d,i)=>`<text class="axis-lbl" text-anchor="middle" x="${30+i*30+15}" y="88">${d}</text>`).join('')}
+          <path fill="url(#gt)" opacity="0.3" d="M${tpts} L${lx},75 L${fx},75 Z"/>
+          <path fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M${tpts}"/>
+          <path fill="none" stroke="#f87171" stroke-width="1" stroke-dasharray="3 3" opacity="0.25" d="M${tmxpts}"/>
+          <path fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3 3" opacity="0.25" d="M${tmnpts}"/>
+          ${tempData.map((v,i)=>`<circle fill="#f87171" cx="${30+i*30+15}" cy="${75-((v-14)/(26-14))*70}" r="2.5"/>`).join('')}
+        </svg>
+      </div>
+      <div class="gchart">
+        <div class="gchart-head"><span>SAVAITĖS DRĖGMĖ</span><span class="gchart-badge hum">%</span></div>
+        <svg class="chart-svg" viewBox="0 0 240 90" height="88">
+          <defs>
+            <linearGradient id="gh" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          ${[0,25,50,75].map(y=>`<line class="grid-line" x1="30" y1="${y}" x2="240" y2="${y}"/>`).join('')}
+          <text class="axis-lbl" x="0" y="4">100%</text><text class="axis-lbl" x="0" y="29">75%</text>
+          <text class="axis-lbl" x="0" y="54">50%</text><text class="axis-lbl" x="0" y="79">25%</text>
+          ${dienos.map((d,i)=>`<text class="axis-lbl" text-anchor="middle" x="${30+i*30+15}" y="88">${d}</text>`).join('')}
+          <path fill="url(#gh)" opacity="0.3" d="M${hmpts} L${lx},75 L${fx},75 Z"/>
+          <path fill="none" stroke="var(--accent2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M${hmpts}"/>
+          <line stroke="var(--accent3)" stroke-width="1" stroke-dasharray="3 3" opacity="0.35" x1="30" y1="${75-(40/100)*70}" x2="240" y2="${75-(40/100)*70}"/>
+          <line stroke="#f87171" stroke-width="1" stroke-dasharray="3 3" opacity="0.35" x1="30" y1="${75-(80/100)*70}" x2="240" y2="${75-(80/100)*70}"/>
+          ${humData.map((v,i)=>`<circle fill="var(--accent2)" cx="${30+i*30+15}" cy="${75-(v/100)*70}" r="2.5"/>`).join('')}
+        </svg>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-lbl">TEMP. VIDURKIS</div><div class="stat-val a">20.5°</div><div class="stat-sub">savaitė</div></div>
+      <div class="stat-box"><div class="stat-lbl">DRĖGMĖ VIDUTINĖ</div><div class="stat-val b">61%</div><div class="stat-sub">savaitė</div></div>
+      <div class="stat-box"><div class="stat-lbl">KARŠČIAUSIAS</div><div class="stat-val r">26.0°</div><div class="stat-sub">ketvirtadienis</div></div>
+      <div class="stat-box"><div class="stat-lbl">DRĖGNIAUSIA</div><div class="stat-val g">78%</div><div class="stat-sub">šeštadienis</div></div>
+    </div>`;
+}
+
+go('dashboard');
+</script>
